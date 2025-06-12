@@ -3,18 +3,18 @@ using UnityEngine;
 public class FireEnvironmentSpawner : MonoBehaviour
 {
     [Header("Génération automatique de décor FEU")]
-    public Transform player; // Référence au joueur
+    public Transform player; 
     
     [Header("Synchronisation avec InfiniteGround")]
-    public InfiniteGround infiniteGround; // Référence au script InfiniteGround
-    public bool syncWithGround = true; // Synchroniser avec le sol infini
+    public InfiniteGround infiniteGround; 
+    public bool syncWithGround = true; 
     
     [Header("Configuration")]
-    public float spawnDistance = 40f; // Distance de spawn devant le joueur
-    public float despawnDistance = 60f; // Distance de suppression derrière le joueur
-    public float minSideDistance = 10f; // Distance MINIMUM de la piste
-    public float maxSideDistance = 30f; // Distance maximum
-    public float spawnInterval = 10f; // MÊME valeur que tileLength dans InfiniteGround
+    public float spawnDistance = 40f; 
+    public float despawnDistance = 60f; 
+    public float minSideDistance = 10f; 
+    public float maxSideDistance = 30f; 
+    public float spawnInterval = 10f; 
     
     [Header("Densité du décor")]
     [Range(0f, 1f)] public float volcanoRockChance = 0.4f;
@@ -25,7 +25,7 @@ public class FireEnvironmentSpawner : MonoBehaviour
     [Header("Debug")]
     public bool showDebugMessages = true;
     
-    private float lastSpawnZ = -999f; // Valeur initiale très négative
+    private float lastSpawnZ = -999f;
     
     void Start()
     {
@@ -41,39 +41,39 @@ public class FireEnvironmentSpawner : MonoBehaviour
             }
         }
         
-        // Auto-trouver InfiniteGround si pas assigné
+        
         if (infiniteGround == null && syncWithGround)
         {
             infiniteGround = FindObjectOfType<InfiniteGround>();
             if (infiniteGround != null)
             {
-                // SYNCHRONISATION: Utiliser la même tileLength
+                
                 spawnInterval = infiniteGround.tileLength;
                 if (showDebugMessages)
                     Debug.Log($"Synchronisé avec InfiniteGround. Interval: {spawnInterval}");
             }
         }
         
-        // Attendre un frame pour que InfiniteGround s'initialise
+        
         Invoke("DelayedStart", 0.1f);
     }
     
     void DelayedStart()
     {
-        // Initialiser avec une valeur très en arrière pour forcer la génération
+        
         lastSpawnZ = player.position.z - 100f;
         
         if (showDebugMessages)
             Debug.Log($"FireEnvironmentSpawner initialisé. Position joueur : {player.position.z}");
         
-        // Générer du décor initial sur une large zone
+        
         for (int i = -5; i < 15; i++)
         {
             float spawnZ = player.position.z + (i * spawnInterval);
             SpawnFireEnvironmentChunk(spawnZ);
         }
         
-        // Mettre à jour lastSpawnZ pour la génération continue
+        
         lastSpawnZ = player.position.z + (14 * spawnInterval);
     }
     
@@ -83,14 +83,14 @@ public class FireEnvironmentSpawner : MonoBehaviour
         
         float playerZ = player.position.z;
         
-        // SYNCHRONISATION AVEC INFINITEGROUND
+        
         if (syncWithGround && infiniteGround != null)
         {
-            // Utiliser la même logique que InfiniteGround
+            
             int tilesAhead = infiniteGround.tilesAhead;
             float tileLength = infiniteGround.tileLength;
             
-            // Générer du décor pour chaque nouvelle tuile de sol
+            
             while (lastSpawnZ < playerZ + tilesAhead * tileLength)
             {
                 lastSpawnZ += tileLength;
@@ -103,7 +103,7 @@ public class FireEnvironmentSpawner : MonoBehaviour
         }
         else
         {
-            // Mode autonome (sans synchronisation)
+            
             while (lastSpawnZ < playerZ + spawnDistance)
             {
                 lastSpawnZ += spawnInterval;
@@ -115,8 +115,8 @@ public class FireEnvironmentSpawner : MonoBehaviour
             }
         }
         
-        // Nettoyage synchronisé aussi
-        if (Time.frameCount % 300 == 0) // Toutes les 5 secondes environ
+       
+        if (Time.frameCount % 300 == 0) 
         {
             if (syncWithGround && infiniteGround != null)
             {
@@ -138,9 +138,9 @@ public class FireEnvironmentSpawner : MonoBehaviour
         if (showDebugMessages)
             Debug.Log($"=== Génération chunk à Z: {zPosition:F1} ===");
         
-        int objectsPerSide = 3; // Objets par côté pour chaque chunk
+        int objectsPerSide = 3; 
         
-        // Côté GAUCHE (X négatif)
+        
         for (int i = 0; i < objectsPerSide; i++)
         {
             float leftX = Random.Range(-maxSideDistance, -minSideDistance);
@@ -149,7 +149,7 @@ public class FireEnvironmentSpawner : MonoBehaviour
             SpawnRandomFireObject(leftX, leftZ);
         }
         
-        // Côté DROIT (X positif)
+        
         for (int i = 0; i < objectsPerSide; i++)
         {
             float rightX = Random.Range(minSideDistance, maxSideDistance);
@@ -158,7 +158,7 @@ public class FireEnvironmentSpawner : MonoBehaviour
             SpawnRandomFireObject(rightX, rightZ);
         }
         
-        // Spawn éléments de fond moins fréquemment
+       
         if (Random.value < 0.3f)
         {
             SpawnBackgroundFire(zPosition);
@@ -167,7 +167,7 @@ public class FireEnvironmentSpawner : MonoBehaviour
     
     void SpawnRandomFireObject(float x, float z)
     {
-        // TRIPLE VÉRIFICATION DE SÉCURITÉ
+        
         if (Mathf.Abs(x) < minSideDistance)
         {
             if (showDebugMessages)
@@ -196,7 +196,7 @@ public class FireEnvironmentSpawner : MonoBehaviour
         }
         else
         {
-            // Toujours créer quelque chose
+            
             CreateVolcanoRock(x, z);
         }
     }

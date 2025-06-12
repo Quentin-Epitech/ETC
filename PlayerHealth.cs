@@ -9,33 +9,33 @@ public class PlayerHealth : MonoBehaviour
     private int currentLives;
     
     [Header("UI - Cœurs")]
-    public Texture2D hearthTexture; // Votre asset "Hearth" (en Texture)
-    public Transform heartsContainer; // Parent pour organiser les cœurs (Panel horizontal)
+    public Texture2D hearthTexture; 
+    public Transform heartsContainer; 
     private List<GameObject> heartsList = new List<GameObject>();
     
     [Header("UI - Autres")]
-    public GameObject gameOverPanel; // Panel de fin de jeu
+    public GameObject gameOverPanel; 
     
     [Header("Invincibilité temporaire")]
     public float invincibilityDuration = 2f;
-    public float startInvincibilityDuration = 3f; // Invincibilité au démarrage
+    public float startInvincibilityDuration = 3f; 
     private bool isInvincible = false;
     
     [Header("Score")]
-    public ScoreManager scoreManager; // Référence au ScoreManager
+    public ScoreManager scoreManager; 
     
     [Header("Effets visuels")]
-    public GameObject damageEffect; // Effet visuel lors des dégâts
+    public GameObject damageEffect; 
     private Renderer playerRenderer;
-    private Animator playerAnimator; // Pour contrôler les animations
-    private Material originalMaterial; // Matériau original
-    private Color originalColor; // Couleur originale
+    private Animator playerAnimator; 
+    private Material originalMaterial; 
+    private Color originalColor; 
     
     void Start()
     {
         currentLives = maxLives;
-        playerRenderer = GetComponentInChildren<Renderer>(); // Chercher dans les enfants aussi
-        playerAnimator = GetComponentInChildren<Animator>(); // Récupérer l'Animator
+        playerRenderer = GetComponentInChildren<Renderer>(); 
+        playerAnimator = GetComponentInChildren<Animator>(); 
         
         if (playerRenderer != null)
         {
@@ -45,13 +45,12 @@ public class PlayerHealth : MonoBehaviour
         
         CreateHeartsUI();
         
-        // Démarrer l'invincibilité de début de partie
         StartCoroutine(StartInvincibilityCoroutine());
     }
     
     private void CreateHeartsUI()
     {
-        // Supprimer les anciens cœurs s'ils existent
+       
         foreach (GameObject heart in heartsList)
         {
             if (heart != null)
@@ -59,25 +58,25 @@ public class PlayerHealth : MonoBehaviour
         }
         heartsList.Clear();
         
-        // Créer les nouveaux cœurs avec votre asset "Hearth"
+        
         for (int i = 0; i < maxLives; i++)
         {
-            // Créer un nouveau GameObject pour le cœur
+            
             GameObject newHeart = new GameObject("Heart_" + i);
             newHeart.transform.SetParent(heartsContainer);
             
-            // Ajouter le composant Image
+            
             Image heartImage = newHeart.AddComponent<Image>();
             
-            // Convertir la Texture en Sprite
+            // Convertir la texture en Sprite
             Sprite heartSprite = Sprite.Create(hearthTexture, 
                 new Rect(0, 0, hearthTexture.width, hearthTexture.height), 
                 new Vector2(0.5f, 0.5f));
             heartImage.sprite = heartSprite;
             
-            // Ajuster la taille du cœur (2 fois plus petit)
+            
             RectTransform rectTransform = newHeart.GetComponent<RectTransform>();
-            rectTransform.sizeDelta = new Vector2(25, 25); // Taille réduite
+            rectTransform.sizeDelta = new Vector2(25, 25); 
             rectTransform.localScale = Vector3.one;
             
             heartsList.Add(newHeart);
@@ -93,20 +92,20 @@ public class PlayerHealth : MonoBehaviour
         currentLives--;
         Debug.Log("Vie perdue ! Vies restantes : " + currentLives);
         
-        // Jouer l'animation de dégâts ou effet de recul
+        
         if (playerAnimator != null)
         {
-            // Option 1 : Si vous avez une animation de dégâts
+            
             playerAnimator.SetTrigger("TakeDamage");
             
-            // Option 2 : Ou créer un effet de "recul" simple
+            
             StartCoroutine(DamageRecoilEffect());
         }
         
-        // Activer l'invincibilité temporaire
+        
         StartCoroutine(InvincibilityCoroutine());
         
-        // Effet visuel de dégâts
+        
         if (damageEffect != null)
         {
             GameObject effect = Instantiate(damageEffect, transform.position, Quaternion.identity);
@@ -115,7 +114,7 @@ public class PlayerHealth : MonoBehaviour
         
         UpdateHeartsUI();
         
-        // Vérifier si le joueur est mort
+        
         if (currentLives <= 0)
         {
             GameOver();
@@ -128,8 +127,7 @@ public class PlayerHealth : MonoBehaviour
         {
             if (heartsList[i] != null)
             {
-                // Afficher le cœur si le joueur a encore cette vie
-                // Cacher le cœur si le joueur a perdu cette vie
+                
                 heartsList[i].SetActive(i < currentLives);
             }
         }
@@ -140,7 +138,7 @@ public class PlayerHealth : MonoBehaviour
         isInvincible = true;
         Debug.Log("Invincibilité de démarrage activée pour " + startInvincibilityDuration + " secondes");
         
-        // Juste attendre sans effet visuel
+       
         yield return new WaitForSeconds(startInvincibilityDuration);
         
         isInvincible = false;
@@ -151,11 +149,11 @@ public class PlayerHealth : MonoBehaviour
     {
         Vector3 originalScale = transform.localScale;
         
-        // Effet de "compression" rapide
+      
         transform.localScale = originalScale * 0.8f;
         yield return new WaitForSeconds(0.1f);
         
-        // Retour à la normale
+      
         transform.localScale = originalScale;
     }
     
@@ -163,18 +161,18 @@ public class PlayerHealth : MonoBehaviour
     {
         isInvincible = true;
         
-        // Effet de changement de couleur
+        
         for (float i = 0; i < invincibilityDuration; i += 0.1f)
         {
             if (playerRenderer != null)
             {
-                // Alterner entre couleur normale et rouge
+                
                 playerRenderer.material.color = (playerRenderer.material.color == originalColor) ? Color.red : originalColor;
             }
             yield return new WaitForSeconds(0.1f);
         }
         
-        // S'assurer que le joueur a sa couleur normale à la fin
+        
         if (playerRenderer != null)
         {
             playerRenderer.material.color = originalColor;
@@ -186,7 +184,7 @@ public class PlayerHealth : MonoBehaviour
     private void GameOver()
     {
         Debug.Log("Game Over !");
-        Time.timeScale = 0f; // Pause le jeu
+        Time.timeScale = 0f; 
         
         if (gameOverPanel != null)
         {
@@ -198,7 +196,7 @@ public class PlayerHealth : MonoBehaviour
     {
         Time.timeScale = 1f;
         
-        // Redémarrer le score
+        
         if (scoreManager != null)
         {
             scoreManager.RestartScore();
@@ -207,7 +205,7 @@ public class PlayerHealth : MonoBehaviour
         UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
     }
     
-    // Getters publics
+    
     public int GetCurrentLives() { return currentLives; }
     public bool IsInvincible() { return isInvincible; }
 }
