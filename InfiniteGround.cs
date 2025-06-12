@@ -17,7 +17,7 @@ public class InfiniteGround : MonoBehaviour
 
     void Start()
     {
-        // Vérifications de sécurité
+        
         if (groundTilePrefab == null)
         {
             Debug.LogError("ERREUR: groundTilePrefab n'est pas assigné dans InfiniteGround !");
@@ -26,7 +26,7 @@ public class InfiniteGround : MonoBehaviour
             return;
         }
         
-        // Trouver le joueur automatiquement
+        
         if (player == null)
         {
             GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
@@ -42,7 +42,7 @@ public class InfiniteGround : MonoBehaviour
             }
         }
         
-        // Générer les premières tuiles
+        
         for (int i = -tilesBehind; i < tilesAhead; i++)
         {
             SpawnTile(i * tileLength);
@@ -55,7 +55,7 @@ public class InfiniteGround : MonoBehaviour
     {
         if (player == null) return;
         
-        // Générer de nouvelles tuiles devant le joueur
+        
         while (lastTileZ < player.position.z + tilesAhead * tileLength)
         {
             lastTileZ += tileLength;
